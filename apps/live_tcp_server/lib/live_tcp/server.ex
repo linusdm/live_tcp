@@ -1,13 +1,13 @@
 defmodule LiveTcp.Server do
   use GenServer
-  alias LiveTcp.Server
 
   def start_link(opts) do
-    {:ok, _pid} = Server.Agent.start_link(:off)
-    GenServer.start_link(__MODULE__, :ok, opts)
+    GenServer.start_link(__MODULE__, :ok, Keyword.merge(opts, name: __MODULE__))
   end
 
   def init(_) do
+    :ets.new(__MODULE__, [:named_table, :public, read_concurrency: true])
+
     {:ok, socket} =
       :gen_tcp.listen(4040, [:binary, packet: :line, active: false, reuseaddr: true])
 
@@ -29,6 +29,20 @@ defmodule LiveTcp.Server do
   end
 
   defp serve(socket) do
-    :gen_tcp.send(socket, "#{Atom.to_string(Server.Agent.get_value())}")
+    {:ok, line} = :gen_tcp.recv(socket, 0)
+    key = line |> String.replace("\r\n", "")
+
+    value =
+      case :ets.lookup(__MODULE__, key) do
+        [{^key, value}] -> value
+        [] -> "off"
+      end
+
+    :gen_tcp.send(socket, value)
+    :gen_tcp.close(socket)
+  end
+
+  def set_value(key, new_value \\ "on") do
+    :ets.insert(__MODULE__, {key, new_value})
   end
 end

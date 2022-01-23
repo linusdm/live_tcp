@@ -16,19 +16,35 @@ defmodule LiveTcp.Monitor do
   def init(_) do
     # allow server 5 seconds to startup
     Process.send_after(self(), :poll, :timer.seconds(5))
-    {:ok, nil}
+    {:ok, _initial_value = "off"}
   end
 
-  def handle_info(:poll, _state) do
+  def handle_info(:poll, value) do
     {:ok, socket} = :gen_tcp.connect({127, 0, 0, 1}, 4040, [:binary, active: false])
-    {:ok, data} = :gen_tcp.recv(socket, 0)
+
+    :gen_tcp.send(socket, "key\r\n")
+    {:ok, new_value} = :gen_tcp.recv(socket, 0, :timer.seconds(1))
     :gen_tcp.close(socket)
-    Phoenix.PubSub.broadcast(LiveTcp.Monitor.PubSub, "alarm_value_changed", data)
+
+    if new_value !== value, do: send(self(), :broadcast_change)
+
     Process.send_after(self(), :poll, :timer.seconds(10))
-    {:noreply, data}
+    {:noreply, new_value}
   end
 
-  def handle_call(:get_value, _from, data) do
-    {:reply, data, data}
+  def handle_info(:broadcast_change, value) do
+    IO.puts("sending mail")
+    import Swoosh.Email
+
+    new()
+    |> to({"to", "to@example.com"})
+    |> from({"from", "from@example.com"})
+    |> subject("changed")
+    |> html_body("<h1>new value: #{value}</h1>")
+    |> text_body("new value: #{value}\n")
+    |> LiveTcp.Monitor.Mailer.deliver()
+
+    # Phoenix.PubSub.broadcast(LiveTcp.Monitor.PubSub, "alarm_value_changed", value)
+    {:noreply, value}
   end
 end
