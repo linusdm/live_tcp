@@ -1,6 +1,4 @@
 defmodule LiveTcp.Server.Application do
-  # See https://hexdocs.pm/elixir/Application.html
-  # for more information on OTP Applications
   @moduledoc false
 
   use Application
@@ -8,12 +6,10 @@ defmodule LiveTcp.Server.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Starts a worker by calling: LiveTcp.Server.Worker.start_link(arg)
-      # {LiveTcp.Server.Worker, arg}
+      {Task.Supervisor, name: LiveTcp.Server.TaskSupervisor},
+      LiveTcp.Server
     ]
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
     opts = [strategy: :one_for_one, name: LiveTcp.Server.Supervisor]
     Supervisor.start_link(children, opts)
   end
