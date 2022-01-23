@@ -1,13 +1,13 @@
 defmodule LiveTcp.MonitorWeb.Endpoint do
-  use Phoenix.Endpoint, otp_app: :live_tcp_monitor_web
+  use Phoenix.Endpoint, otp_app: :live_tcp_monitor
 
   # The session will be stored in the cookie and signed,
   # this means its contents can be read but not tampered with.
   # Set :encryption_salt if you would also like to encrypt it.
   @session_options [
     store: :cookie,
-    key: "_live_tcp_monitor_web_key",
-    signing_salt: "d1BID2MH"
+    key: "_live_tcp_monitor_key",
+    signing_salt: "XMSjOwZv"
   ]
 
   socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
@@ -18,7 +18,7 @@ defmodule LiveTcp.MonitorWeb.Endpoint do
   # when deploying your static files in production.
   plug Plug.Static,
     at: "/",
-    from: :live_tcp_monitor_web,
+    from: :live_tcp_monitor,
     gzip: false,
     only: ~w(assets fonts images favicon.ico robots.txt)
 
@@ -28,7 +28,7 @@ defmodule LiveTcp.MonitorWeb.Endpoint do
     socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
     plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
-    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :live_tcp_monitor_web
+    plug Phoenix.Ecto.CheckRepoStatus, otp_app: :live_tcp_monitor
   end
 
   plug Phoenix.LiveDashboard.RequestLogger,
