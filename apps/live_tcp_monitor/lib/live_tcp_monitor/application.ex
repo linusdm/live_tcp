@@ -10,10 +10,10 @@ defmodule LiveTcp.Monitor.Application do
       LiveTcp.MonitorWeb.Telemetry,
       {Phoenix.PubSub, name: LiveTcp.Monitor.PubSub},
       LiveTcp.MonitorWeb.Endpoint,
-      LiveTcp.Monitor
+      LiveTcp.Monitor.Supervisor
     ]
 
-    Supervisor.start_link(children, strategy: :one_for_one, name: LiveTcp.Monitor.Supervisor)
+    Supervisor.start_link(children, strategy: :one_for_one, name: LiveTcp.Monitor)
   end
 
   # Tell Phoenix to update the endpoint configuration
