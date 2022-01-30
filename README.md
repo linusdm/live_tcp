@@ -13,11 +13,13 @@ Both applications are started when you run `iex -S phx.server` from the root fol
 
 ## TODO
 
-- [x] Start a very simple embedded TCP server and add an interface to change values (from iex)
-- [x] Dynamically start monitors
-- [x] Observe changes in a LiveView
+- [x] Start a very simple embedded TCP server and add an interface to change values (from iex).
+- [x] Dynamically start monitors.
+- [x] Observe changes in a LiveView.
 - [ ] Persist monitor specifications to survive a system restart,
       and make sure all registered monitors are restarted at startup.
+- [ ] Use [Ranch](https://ninenines.eu/docs/en/ranch/2.1/guide/) to implement the TCP server.
+- [ ] Do a performance benchmark with a few thousand monitors.
 
 ## Development
 
