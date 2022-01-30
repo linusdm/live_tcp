@@ -53,4 +53,4 @@ To change a monitored value you need the iex console. Simply execute:
 LiveTcp.Server.set_value("1", "new value")
 ```
 The first arguement indicates the identifier (which you used to start the monitor above). The second argument is the new
-value for this identifier.
+value for this identifier. This change should be observed within a few seconds, without reloading the LiveView.
