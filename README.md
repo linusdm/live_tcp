@@ -6,22 +6,22 @@ Any observed changes are broadcast over a Phoenix PubSub to allow LiveViews to s
 ## Apps
 
 This umbrella project contains two apps:
-- `:live_tcp_monitor`: a simple Phoenix application that starts and consumes the monitors.
-- `:live_tcp_server`: a simple TCP server to emulate a back-end. It also exposes an API through iex to change values.
+- `:live_tcp_monitor` a simple Phoenix application that starts and consumes the monitors.
+- `:live_tcp_server` a simple TCP server to emulate a back-end. It also exposes an API through iex to change values.
 
 Both applications are started when you run `iex -S phx.server` from the root folder.
 
 ## TODO
 
-[x] Start a very simple embedded TCP server and add an interface to change values (from iex)
-[x] Dynamically start monitors
-[x] Observe changes in a LiveView
-[ ] Persist monitor specifications to survive a system restart,
-    and make sure all registered monitors are restarted at startup.
+- [x] Start a very simple embedded TCP server and add an interface to change values (from iex)
+- [x] Dynamically start monitors
+- [x] Observe changes in a LiveView
+- [ ] Persist monitor specifications to survive a system restart,
+      and make sure all registered monitors are restarted at startup.
 
 ## Development
 
-You can use [asdf](https://github.com/asdf-vm/asdf) and the provided `.tools-versions` to get the
+You can use [asdf](https://github.com/asdf-vm/asdf) and the provided `.tool-versions` to get the
 correct erlang and elixir environment.
 
 Start up a postgres database with docker by running `docker-compose up -d` in the root folder.
@@ -43,3 +43,14 @@ To start your Phoenix server:
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
+## Use the application
+
+To start a monitor with some identifier simply visit [`localhost:4000/monitors/1`](http://localhost:4000/monitors/1)
+(the last part inidicates the identifier).
+
+To change a monitored value you need the iex console. Simply execute:
+```elixir
+LiveTcp.Server.set_value("1", "new value")
+```
+The first arguement indicates the identifier (which you used to start the monitor above). The second argument is the new
+value for this identifier.
