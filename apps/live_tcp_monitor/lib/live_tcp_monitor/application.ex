@@ -13,7 +13,10 @@ defmodule LiveTcp.Monitor.Application do
       LiveTcp.Monitor.Supervisor
     ]
 
-    Supervisor.start_link(children, strategy: :one_for_one, name: LiveTcp.Monitor)
+    Supervisor.start_link(children,
+      strategy: :one_for_one,
+      name: LiveTcp.Monitor.ApplicationSupervisor
+    )
   end
 
   # Tell Phoenix to update the endpoint configuration

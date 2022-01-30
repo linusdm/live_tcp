@@ -12,14 +12,14 @@ defmodule LiveTcp.Monitor.Worker do
     {:ok, {id, _initial_value = nil}}
   end
 
-  def handle_info(:poll, {id, value}) do
+  def handle_info(:poll, {id, old_value}) do
     {:ok, socket} = :gen_tcp.connect({127, 0, 0, 1}, 4040, [:binary, active: false])
 
     :gen_tcp.send(socket, "#{id}\r\n")
     {:ok, new_value} = :gen_tcp.recv(socket, 0, :timer.seconds(1))
     :gen_tcp.close(socket)
 
-    if new_value !== value, do: send(self(), :broadcast_change)
+    if not is_nil(old_value) and new_value !== old_value, do: send(self(), :broadcast_change)
 
     Process.send_after(self(), :poll, :timer.seconds(10))
     {:noreply, {id, new_value}}
@@ -35,7 +35,7 @@ defmodule LiveTcp.Monitor.Worker do
     |> text_body("new value: #{value}\n")
     |> LiveTcp.Monitor.Mailer.deliver()
 
-    Phoenix.PubSub.broadcast(LiveTcp.Monitor.PubSub, "alarm_value_changed:#{id}", value)
+    Phoenix.PubSub.broadcast(LiveTcp.Monitor.PubSub, "monitor:#{id}", {:new_value, value})
     {:noreply, state}
   end
 

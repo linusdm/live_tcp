@@ -18,6 +18,8 @@ defmodule LiveTcp.MonitorWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :index
+
+    live "/monitors/:id", MonitorLive.Index
   end
 
   # Other scopes may use custom stacks.
